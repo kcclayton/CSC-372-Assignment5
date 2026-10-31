@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { fetchShowCast } from "../tvmaze.js";
+import {
+  displayValue,
+  formatRating,
+  formatUpdatedDate,
+  stripHtmlMarkup,
+} from "../utils.js";
 
 // ShowCard component: renders show details and asynchronously loaded cast.
 export default function ShowCard({ show, isDetailPage = false }) {
@@ -134,7 +140,7 @@ export default function ShowCard({ show, isDetailPage = false }) {
   );
 }
 
-// ShowCard helpers: format API values for readable text.
+// ShowCard component: renders each label/value detail pair.
 function ShowDetail({ label, value }) {
   return (
     <p className="show-card__detail">
@@ -142,40 +148,4 @@ function ShowDetail({ label, value }) {
       {displayValue(value)}
     </p>
   );
-}
-
-function displayValue(value) {
-  if (value == null) {
-    return "Not available";
-  }
-  const text = String(value).trim();
-  return text || "Not available";
-}
-
-function stripHtmlMarkup(html) {
-  return new DOMParser()
-    .parseFromString(html, "text/html")
-    .body.textContent.trim();
-}
-
-function formatRating(average) {
-  return typeof average === "number" && Number.isFinite(average)
-    ? `${new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 }).format(average)} / 10`
-    : "Not available";
-}
-
-function formatUpdatedDate(updated) {
-  if (typeof updated !== "number" || !Number.isFinite(updated)) {
-    return "Not available";
-  }
-
-  const updatedDate = new Date(updated * 1000);
-  if (Number.isNaN(updatedDate.getTime())) {
-    return "Not available";
-  }
-
-  return new Intl.DateTimeFormat(undefined, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(updatedDate);
 }

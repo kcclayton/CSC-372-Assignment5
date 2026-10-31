@@ -30,6 +30,7 @@ Create a production build with `npm run build`, or serve that build locally with
 - `src/App.jsx` — routed search state, page layout, and status messages.
 - `src/components/` — search form, gallery, and show card components.
 - `src/tvmaze.js` — TVmaze requests, queueing, and rate-limit retries.
+- `src/utils.js` — shared API-value fallbacks and display formatters.
 - `style.css` — responsive gallery and card styling.
 
 Show data is provided by TVmaze. See the attribution link in the page footer.

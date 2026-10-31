@@ -11,10 +11,8 @@ export default function SearchForm({ onSearch, status, hasError }) {
       return;
     }
 
-    const succeeded = await onSearch(trimmedSearchTerm);
-    if (succeeded && searchTerm.trim() === trimmedSearchTerm) {
-      setSearchTerm("");
-    }
+    onSearch(trimmedSearchTerm);
+    setSearchTerm("");
   }
 
   return (

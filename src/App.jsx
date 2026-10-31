@@ -9,40 +9,69 @@ const MAX_DISPLAYED_RESULTS = 10;
 // Page component: owns search state and connects the form to the gallery.
 export default function App() {
   const [shows, setShows] = useState([]);
+  const [searchRequest, setSearchRequest] = useState({
+    searchTerm: DEFAULT_SEARCH,
+    requestId: 0,
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [status, setStatus] = useState("");
-  const [hasError, setHasError] = useState(false);
 
-  async function handleSearch(searchTerm) {
-    setHasError(false);
-    setStatus(`Searching for "${searchTerm}"...`);
-    setShows([]);
-
-    try {
-      const results = await searchShows(searchTerm);
-      const displayedResults = results.slice(0, MAX_DISPLAYED_RESULTS);
-      setShows(displayedResults);
-      setStatus(
-        displayedResults.length
-          ? `Showing ${displayedResults.length}${results.length > displayedResults.length ? ` of ${results.length}` : ""} shows for "${searchTerm}".`
-          : `No shows found for "${searchTerm}".`,
-      );
-      return true;
-    } catch (error) {
-      console.error(error);
-      setShows([]);
-      setHasError(true);
-      setStatus(
-        error.status === 429
-          ? "Too many searches right now. Please wait a moment and try again."
-          : "Unable to load shows. Please try again.",
-      );
-      return false;
-    }
+  function handleSearch(searchTerm) {
+    setSearchRequest((previousRequest) => ({
+      searchTerm,
+      requestId: previousRequest.requestId + 1,
+    }));
   }
 
   useEffect(() => {
-    handleSearch(DEFAULT_SEARCH);
-  }, []);
+    let active = true;
+    const { searchTerm } = searchRequest;
+
+    setLoading(true);
+    setError("");
+    setStatus(`Searching for "${searchTerm}"...`);
+    setShows([]);
+
+    async function loadShows() {
+      try {
+        const results = await searchShows(searchTerm);
+        if (!active) {
+          return;
+        }
+
+        const displayedResults = results.slice(0, MAX_DISPLAYED_RESULTS);
+        setShows(displayedResults);
+        setStatus(
+          displayedResults.length
+            ? `Showing ${displayedResults.length}${results.length > displayedResults.length ? ` of ${results.length}` : ""} shows for "${searchTerm}".`
+            : "",
+        );
+      } catch (requestError) {
+        console.error(requestError);
+        if (!active) {
+          return;
+        }
+
+        setShows([]);
+        setError(
+          requestError.status === 429
+            ? "Too many searches right now. Please wait a moment and try again."
+            : "Unable to load shows. Please try again.",
+        );
+        setStatus("");
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadShows();
+    return () => {
+      active = false;
+    };
+  }, [searchRequest]);
 
   return (
     <>
@@ -53,10 +82,10 @@ export default function App() {
       <main>
         <SearchForm
           onSearch={handleSearch}
-          status={status}
-          hasError={hasError}
+          status={error || status}
+          hasError={Boolean(error)}
         />
-        <ShowGallery shows={shows} />
+        <ShowGallery shows={shows} loading={loading} error={error} />
       </main>
 
       <footer className="site-footer">

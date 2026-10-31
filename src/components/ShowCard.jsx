@@ -69,8 +69,10 @@ export default function ShowCard({ show }) {
           {cast === null ? (
             <li>Loading cast...</li>
           ) : cast.length ? (
-            cast.slice(0, 5).map(({ person, character }, index) => (
-              <li key={`${person?.id ?? person?.name}-${index}`}>
+            cast.slice(0, 5).map(({ person, character }) => (
+              <li
+                key={`${person?.id ?? person?.name}-${character?.id ?? character?.name}`}
+              >
                 {displayValue(person?.name)} as {displayValue(character?.name)}
               </li>
             ))

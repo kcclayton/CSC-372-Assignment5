@@ -1,6 +1,6 @@
 # TVmaze Gallery
 
-A responsive TV show search gallery built with HTML, CSS, and vanilla JavaScript. It uses the [TVmaze API](https://www.tvmaze.com/api) to find shows and present their details.
+A responsive React single-page TV show search gallery built with Vite. It uses the [TVmaze API](https://www.tvmaze.com/api) to find shows and present their details.
 
 ## Features
 
@@ -12,12 +12,22 @@ A responsive TV show search gallery built with HTML, CSS, and vanilla JavaScript
 
 ## Run locally
 
-No package installation or build step is required. Open `index.html` in a browser, or serve the project directory with a local static web server. An internet connection is required to retrieve show and cast data from TVmaze.
+Install dependencies and start the Vite development server:
 
-## Project files
+```sh
+npm install
+npm run dev
+```
 
-- `index.html` — page structure and search form.
+Create a production build with `npm run build`, or serve that build locally with `npm run preview`. An internet connection is required to retrieve show and cast data from TVmaze.
+
+## Project structure
+
+- `index.html` — Vite document and React mount point.
+- `src/main.jsx` — React application entry point.
+- `src/App.jsx` — search state, page layout, and status messages.
+- `src/components/` — search form, gallery, and show card components.
+- `src/tvmaze.js` — TVmaze requests, queueing, and rate-limit retries.
 - `style.css` — responsive gallery and card styling.
-- `script.js` — TVmaze search, result cards, and cast loading.
 
 Show data is provided by TVmaze. See the attribution link in the page footer.

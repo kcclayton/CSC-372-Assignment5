@@ -155,8 +155,8 @@ section h2 {
 }
 
 .gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 1.25rem;
   margin: 0;
   padding: 0;
@@ -164,6 +164,8 @@ section h2 {
 }
 
 .gallery > li {
+  min-width: min(100%, 13rem);
+  flex: 1 1 13rem;
   overflow: hidden;
   border: 1px solid #e1e9e7;
   border-radius: 0.9rem;
@@ -205,6 +207,22 @@ section h2 {
   color: #203641;
   font-size: 1.1rem;
   line-height: 1.35;
+}
+
+.gallery .show-card__title a {
+  color: inherit;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.2em;
+}
+
+.gallery .show-card__title a:hover {
+  color: #137c70;
+}
+
+.gallery .show-card__title a:focus-visible {
+  border-radius: 0.15rem;
+  outline: 3px solid #75c8bc;
+  outline-offset: 3px;
 }
 
 .gallery .show-card__summary {

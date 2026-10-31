@@ -27,14 +27,16 @@ export default function ShowCard({ show, isDetailPage = false }) {
     };
   }, [show.id, show.name]);
 
-  const summary = show.summary ? stripHtmlMarkup(show.summary) : "";
+  const summary = show.summary ? displayValue(stripHtmlMarkup(show.summary)) : "";
+  const posterUrl =
+    typeof show.image?.medium === "string" ? show.image.medium.trim() : "";
 
   return (
     <article className="show-card">
-      {show.image?.medium && !posterUnavailable ? (
+      {posterUrl && !posterUnavailable ? (
         <img
           className="show-card__image"
-          src={show.image.medium}
+          src={posterUrl}
           alt={`Poster for ${displayValue(show.name)}`}
           loading="lazy"
           onError={() => setPosterUnavailable(true)}
@@ -56,23 +58,23 @@ export default function ShowCard({ show, isDetailPage = false }) {
         )}
       </h3>
       <p className="show-card__summary">{summary || "Not available"}</p>
-      {show.genres?.length > 0 && (
-        <ShowDetail
-          label="Genres"
-          value={show.genres.map(displayValue).join(", ")}
-        />
-      )}
-      {typeof show.rating?.average === "number" &&
-        Number.isFinite(show.rating.average) && (
-          <ShowDetail
-            label="Average rating"
-            value={formatRating(show.rating.average)}
-          />
-        )}
+      <ShowDetail
+        label="Genres"
+        value={
+          show.genres?.length
+            ? show.genres.map(displayValue).join(", ")
+            : "Not available"
+        }
+      />
+      <ShowDetail
+        label="Average rating"
+        value={formatRating(show.rating?.average)}
+      />
       <div className="show-card__dates">
-        {show.premiered && (
-          <ShowDetail label="Premiere date" value={show.premiered} />
-        )}
+        <ShowDetail
+          label="Premiere date"
+          value={displayValue(show.premiered)}
+        />
         {show.ended && <ShowDetail label="End date" value={show.ended} />}
       </div>
       <ShowDetail label="Last updated" value={formatUpdatedDate(show.updated)} />
@@ -82,13 +84,19 @@ export default function ShowCard({ show, isDetailPage = false }) {
           {cast === null ? (
             <li>Loading cast...</li>
           ) : cast.length ? (
-            cast.slice(0, 5).map(({ person, character }) => (
-              <li
-                key={`${person?.id ?? person?.name}-${character?.id ?? character?.name}`}
-              >
-                {displayValue(person?.name)} as {displayValue(character?.name)}
-              </li>
-            ))
+            cast.slice(0, 5).map(({ person, character }) => {
+              const personName = displayValue(person?.name);
+              const characterName = displayValue(character?.name);
+              return (
+                <li
+                  key={`${person?.id ?? personName}-${character?.id ?? characterName}`}
+                >
+                  {characterName === "Not available"
+                    ? personName
+                    : `${personName} as ${characterName}`}
+                </li>
+              );
+            })
           ) : (
             <li>Not available</li>
           )}
@@ -114,7 +122,11 @@ function ShowDetail({ label, value }) {
 }
 
 function displayValue(value) {
-  return value == null ? "Not available" : String(value);
+  if (value == null) {
+    return "Not available";
+  }
+  const text = String(value).trim();
+  return text || "Not available";
 }
 
 function stripHtmlMarkup(html) {

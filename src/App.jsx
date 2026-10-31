@@ -23,6 +23,16 @@ export default function App() {
   useEffect(() => {
     let active = true;
 
+    if (!searchTerm.trim()) {
+      setLoading(false);
+      setError("");
+      setStatus("");
+      setShows([]);
+      return () => {
+        active = false;
+      };
+    }
+
     setLoading(true);
     setError("");
     setStatus(`Searching for "${searchTerm}"...`);
@@ -79,10 +89,14 @@ export default function App() {
           key={searchTerm}
           initialSearchTerm={searchTerm}
           onSearch={handleSearch}
-          status={error || status}
-          hasError={Boolean(error)}
+          status={status}
         />
-        <ShowGallery shows={shows} loading={loading} error={error} />
+        <ShowGallery
+          shows={shows}
+          loading={loading}
+          error={error}
+          isEmptySearch={!searchTerm.trim()}
+        />
       </main>
 
       <footer className="site-footer">

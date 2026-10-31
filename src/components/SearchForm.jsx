@@ -5,18 +5,26 @@ export default function SearchForm({
   initialSearchTerm,
   onSearch,
   status,
-  hasError,
 }) {
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
+  const [validationError, setValidationError] = useState("");
 
-  async function handleSubmit(event) {
+  function handleSubmit(event) {
     event.preventDefault();
     const trimmedSearchTerm = searchTerm.trim();
     if (!trimmedSearchTerm) {
+      setValidationError("Enter a show title or keyword before searching.");
       return;
     }
+    setValidationError("");
     onSearch(trimmedSearchTerm);
-    onSearch(trimmedSearchTerm);
+  }
+
+  function handleChange(event) {
+    setSearchTerm(event.target.value);
+    if (validationError) {
+      setValidationError("");
+    }
   }
 
   return (
@@ -27,15 +35,25 @@ export default function SearchForm({
           id="gallery-search"
           name="q"
           type="search"
-          required
           placeholder="Enter a search term"
           value={searchTerm}
-          onChange={(event) => setSearchTerm(event.target.value)}
+          onChange={handleChange}
+          aria-invalid={Boolean(validationError)}
+          aria-describedby={validationError ? "search-validation" : undefined}
         />
         <button type="submit">Search</button>
       </div>
+      {validationError && (
+        <p
+          id="search-validation"
+          className="search-status search-status--error"
+          role="alert"
+        >
+          {validationError}
+        </p>
+      )}
       <p
-        className={`search-status${hasError ? " search-status--error" : ""}`}
+        className="search-status"
         role="status"
         aria-live="polite"
       >

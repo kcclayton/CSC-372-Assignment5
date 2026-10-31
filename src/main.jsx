@@ -6,12 +6,14 @@ import ShowDetailPage from "./components/ShowDetailPage.jsx";
 import "../style.css";
 
 createRoot(document.getElementById("root")).render(
-  <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<Navigate to="/search/Friends" replace />} />
-      <Route path="/search/:searchTerm" element={<App />} />
-      <Route path="/shows/:showId" element={<ShowDetailPage />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
-  </BrowserRouter>,
+  <React.StrictMode>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Navigate to="/search/Friends" replace />} />
+        <Route path="/search/:searchTerm" element={<App />} />
+        <Route path="/shows/:showId" element={<ShowDetailPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
+  </React.StrictMode>,
 );

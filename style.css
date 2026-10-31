@@ -155,8 +155,8 @@ section h2 {
 }
 
 .gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 1.25rem;
   margin: 0;
   padding: 0;
@@ -164,6 +164,8 @@ section h2 {
 }
 
 .gallery > li {
+  min-width: min(100%, 13rem);
+  flex: 1 1 13rem;
   overflow: hidden;
   border: 1px solid #e1e9e7;
   border-radius: 0.9rem;

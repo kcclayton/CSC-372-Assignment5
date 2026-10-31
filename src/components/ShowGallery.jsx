@@ -7,6 +7,8 @@ export default function ShowGallery({
   loading,
   error,
   isEmptySearch,
+  searchTerm,
+  totalResults,
 }) {
   return (
     <section aria-labelledby="gallery-heading">
@@ -20,15 +22,22 @@ export default function ShowGallery({
       ) : isEmptySearch ? (
         <p role="status">Enter a show title or keyword to search the gallery.</p>
       ) : shows.length === 0 ? (
-        <p role="status">No shows found. Try another search.</p>
+        <p role="status">No shows found for "{searchTerm}". Try another search.</p>
       ) : (
-        <ul className="gallery" aria-label="Gallery results">
-          {shows.map((show) => (
-            <li key={show.id}>
-              <ShowCard show={show} />
-            </li>
-          ))}
-        </ul>
+        <>
+          <p role="status" aria-live="polite">
+            Showing {shows.length}
+            {totalResults > shows.length ? ` of ${totalResults}` : ""}{" "}
+            {shows.length === 1 ? "show" : "shows"} for "{searchTerm}".
+          </p>
+          <ul className="gallery" aria-label="Gallery results">
+            {shows.map((show) => (
+              <li key={show.id}>
+                <ShowCard show={show} />
+              </li>
+            ))}
+          </ul>
+        </>
       )}
     </section>
   );

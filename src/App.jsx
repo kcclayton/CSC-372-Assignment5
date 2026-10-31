@@ -14,7 +14,7 @@ export default function App() {
   const [shows, setShows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [status, setStatus] = useState("");
+  const [totalResults, setTotalResults] = useState(0);
 
   function handleSearch(nextSearchTerm) {
     navigate(`/search/${encodeURIComponent(nextSearchTerm)}`);
@@ -26,8 +26,8 @@ export default function App() {
     if (!searchTerm.trim()) {
       setLoading(false);
       setError("");
-      setStatus("");
       setShows([]);
+      setTotalResults(0);
       return () => {
         active = false;
       };
@@ -35,8 +35,8 @@ export default function App() {
 
     setLoading(true);
     setError("");
-    setStatus(`Searching for "${searchTerm}"...`);
     setShows([]);
+    setTotalResults(0);
 
     async function loadShows() {
       try {
@@ -47,11 +47,7 @@ export default function App() {
 
         const displayedResults = results.slice(0, MAX_DISPLAYED_RESULTS);
         setShows(displayedResults);
-        setStatus(
-          displayedResults.length
-            ? `Showing ${displayedResults.length}${results.length > displayedResults.length ? ` of ${results.length}` : ""} shows for "${searchTerm}".`
-            : "",
-        );
+        setTotalResults(results.length);
       } catch (requestError) {
         console.error(requestError);
         if (!active) {
@@ -64,7 +60,7 @@ export default function App() {
             ? "Too many searches right now. Please wait a moment and try again."
             : "Unable to load shows. Please try again.",
         );
-        setStatus("");
+        setTotalResults(0);
       } finally {
         if (active) {
           setLoading(false);
@@ -89,13 +85,14 @@ export default function App() {
           key={searchTerm}
           initialSearchTerm={searchTerm}
           onSearch={handleSearch}
-          status={status}
         />
         <ShowGallery
           shows={shows}
           loading={loading}
           error={error}
           isEmptySearch={!searchTerm.trim()}
+          searchTerm={searchTerm}
+          totalResults={totalResults}
         />
       </main>
 

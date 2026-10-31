@@ -4,7 +4,6 @@ import React, { useState } from "react";
 export default function SearchForm({
   initialSearchTerm,
   onSearch,
-  status,
 }) {
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
   const [validationError, setValidationError] = useState("");
@@ -52,13 +51,6 @@ export default function SearchForm({
           {validationError}
         </p>
       )}
-      <p
-        className="search-status"
-        role="status"
-        aria-live="polite"
-      >
-        {status}
-      </p>
     </form>
   );
 }

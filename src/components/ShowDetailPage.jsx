@@ -42,6 +42,8 @@ export default function ShowDetailPage() {
           setError(
             requestError.status === 404
               ? "No show was found with that ID. Return to the gallery and choose another show."
+              : requestError.status === 429
+                ? "TVmaze rate limit reached. Please wait a moment before trying again."
               : "Unable to load this show right now. Check your connection and try again.",
           );
         }

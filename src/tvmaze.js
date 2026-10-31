@@ -4,6 +4,8 @@ const TVMAZE_FALLBACK_RETRY_DELAY_MS = 5000;
 
 let tvmazeRequestQueue = Promise.resolve();
 let lastTvmazeRequestAt = 0;
+const showCastCache = new Map();
+const showCastRequests = new Map();
 
 // TVmaze API helpers: serialize requests and retry temporary rate limits.
 export async function searchShows(searchTerm) {
@@ -24,13 +26,37 @@ export async function searchShows(searchTerm) {
 }
 
 export async function fetchShowCast(showId) {
-  const response = await fetchTvmaze(
-    `https://api.tvmaze.com/shows/${showId}/cast`,
-  );
-  if (!response.ok) {
-    throw new Error(`TVmaze cast request failed with status ${response.status}.`);
+  if (showCastCache.has(showId)) {
+    return showCastCache.get(showId);
   }
-  return response.json();
+
+  if (showCastRequests.has(showId)) {
+    return showCastRequests.get(showId);
+  }
+
+  const request = (async () => {
+    const response = await fetchTvmaze(
+      `https://api.tvmaze.com/shows/${showId}/cast`,
+    );
+    if (!response.ok) {
+      const error = new Error(
+        `TVmaze cast request failed with status ${response.status}.`,
+      );
+      error.status = response.status;
+      throw error;
+    }
+
+    const cast = await response.json();
+    showCastCache.set(showId, cast);
+    return cast;
+  })();
+
+  showCastRequests.set(showId, request);
+  try {
+    return await request;
+  } finally {
+    showCastRequests.delete(showId);
+  }
 }
 
 export async function fetchShow(showId) {

@@ -6,6 +6,7 @@ import { fetchShowCast } from "../tvmaze.js";
 export default function ShowCard({ show, isDetailPage = false }) {
   const location = useLocation();
   const [cast, setCast] = useState(null);
+  const [castError, setCastError] = useState("");
   const [posterUnavailable, setPosterUnavailable] = useState(false);
 
   useEffect(() => {
@@ -20,6 +21,11 @@ export default function ShowCard({ show, isDetailPage = false }) {
         console.error(`Unable to load cast for "${show.name}".`, error);
         if (active) {
           setCast([]);
+          setCastError(
+            error.status === 429
+              ? "TVmaze rate limit reached. Cast is temporarily unavailable; please try again later."
+              : "Cast is currently unavailable.",
+          );
         }
       });
 
@@ -98,6 +104,8 @@ export default function ShowCard({ show, isDetailPage = false }) {
         <ul className="show-card__cast-list">
           {cast === null ? (
             <li>Loading cast...</li>
+          ) : castError ? (
+            <li>{castError}</li>
           ) : cast.length ? (
             cast.slice(0, isDetailPage ? 15 : 5).map(({ person, character }) => {
               const personName = displayValue(person?.name);

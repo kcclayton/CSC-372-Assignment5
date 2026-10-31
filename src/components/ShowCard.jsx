@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { fetchShowCast } from "../tvmaze.js";
 
 // ShowCard component: renders show details and asynchronously loaded cast.
 export default function ShowCard({ show, isDetailPage = false }) {
+  const location = useLocation();
   const [cast, setCast] = useState(null);
   const [posterUnavailable, setPosterUnavailable] = useState(false);
 
@@ -54,7 +55,12 @@ export default function ShowCard({ show, isDetailPage = false }) {
         {isDetailPage ? (
           displayValue(show.name)
         ) : (
-          <Link to={`/shows/${show.id}`}>{displayValue(show.name)}</Link>
+          <Link
+            to={`/shows/${show.id}`}
+            state={{ from: location.pathname }}
+          >
+            {displayValue(show.name)}
+          </Link>
         )}
       </h3>
       <p className="show-card__summary">{summary || "Not available"}</p>
@@ -78,13 +84,22 @@ export default function ShowCard({ show, isDetailPage = false }) {
         {show.ended && <ShowDetail label="End date" value={show.ended} />}
       </div>
       <ShowDetail label="Last updated" value={formatUpdatedDate(show.updated)} />
+      {isDetailPage && (
+        <>
+          <ShowDetail label="Status" value={show.status} />
+          <ShowDetail
+            label="Network or streaming channel"
+            value={show.network?.name ?? show.webChannel?.name}
+          />
+        </>
+      )}
       <section className="show-card__cast">
         <h4>Cast</h4>
         <ul className="show-card__cast-list">
           {cast === null ? (
             <li>Loading cast...</li>
           ) : cast.length ? (
-            cast.slice(0, 5).map(({ person, character }) => {
+            cast.slice(0, isDetailPage ? 15 : 5).map(({ person, character }) => {
               const personName = displayValue(person?.name);
               const characterName = displayValue(character?.name);
               return (

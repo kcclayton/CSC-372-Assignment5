@@ -38,7 +38,11 @@ export async function fetchShow(showId) {
     `https://api.tvmaze.com/shows/${showId}`,
   );
   if (!response.ok) {
-    throw new Error(`TVmaze show request failed with status ${response.status}.`);
+    const error = new Error(
+      `TVmaze show request failed with status ${response.status}.`,
+    );
+    error.status = response.status;
+    throw error;
   }
   return response.json();
 }

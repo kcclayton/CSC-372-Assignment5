@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import SearchForm from "./components/SearchForm.jsx";
 import ShowGallery from "./components/ShowGallery.jsx";
 import { searchShows } from "./tvmaze.js";
@@ -8,25 +9,19 @@ const MAX_DISPLAYED_RESULTS = 10;
 
 // Page component: owns search state and connects the form to the gallery.
 export default function App() {
+  const { searchTerm = DEFAULT_SEARCH } = useParams();
+  const navigate = useNavigate();
   const [shows, setShows] = useState([]);
-  const [searchRequest, setSearchRequest] = useState({
-    searchTerm: DEFAULT_SEARCH,
-    requestId: 0,
-  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
 
-  function handleSearch(searchTerm) {
-    setSearchRequest((previousRequest) => ({
-      searchTerm,
-      requestId: previousRequest.requestId + 1,
-    }));
+  function handleSearch(nextSearchTerm) {
+    navigate(`/search/${encodeURIComponent(nextSearchTerm)}`);
   }
 
   useEffect(() => {
     let active = true;
-    const { searchTerm } = searchRequest;
 
     setLoading(true);
     setError("");
@@ -71,7 +66,7 @@ export default function App() {
     return () => {
       active = false;
     };
-  }, [searchRequest]);
+  }, [searchTerm]);
 
   return (
     <>
@@ -81,6 +76,8 @@ export default function App() {
 
       <main>
         <SearchForm
+          key={searchTerm}
+          initialSearchTerm={searchTerm}
           onSearch={handleSearch}
           status={error || status}
           hasError={Boolean(error)}

@@ -1,8 +1,13 @@
 import React, { useState } from "react";
 
 // SearchForm component: validates input and reports search requests to App.
-export default function SearchForm({ onSearch, status, hasError }) {
-  const [searchTerm, setSearchTerm] = useState("Friends");
+export default function SearchForm({
+  initialSearchTerm,
+  onSearch,
+  status,
+  hasError,
+}) {
+  const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -10,9 +15,8 @@ export default function SearchForm({ onSearch, status, hasError }) {
     if (!trimmedSearchTerm) {
       return;
     }
-
     onSearch(trimmedSearchTerm);
-    setSearchTerm("");
+    onSearch(trimmedSearchTerm);
   }
 
   return (

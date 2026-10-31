@@ -9,6 +9,7 @@ A responsive React single-page TV show search gallery built with Vite. It uses t
 - Loads up to five main cast members per show, showing a placeholder while cast data loads or when it is unavailable.
 - Handles missing poster images, failed requests, and API rate limiting.
 - Uses a responsive grid layout and supports keyboard-visible focus states.
+- Uses React Router so searches are addressable at `/search/:searchTerm`; `/` redirects to the default Friends search.
 
 ## Run locally
 
@@ -25,7 +26,7 @@ Create a production build with `npm run build`, or serve that build locally with
 
 - `index.html` — Vite document and React mount point.
 - `src/main.jsx` — React application entry point.
-- `src/App.jsx` — search state, page layout, and status messages.
+- `src/App.jsx` — routed search state, page layout, and status messages.
 - `src/components/` — search form, gallery, and show card components.
 - `src/tvmaze.js` — TVmaze requests, queueing, and rate-limit retries.
 - `style.css` — responsive gallery and card styling.

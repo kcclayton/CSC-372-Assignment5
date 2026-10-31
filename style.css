@@ -209,6 +209,22 @@ section h2 {
   line-height: 1.35;
 }
 
+.gallery .show-card__title a {
+  color: inherit;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.2em;
+}
+
+.gallery .show-card__title a:hover {
+  color: #137c70;
+}
+
+.gallery .show-card__title a:focus-visible {
+  border-radius: 0.15rem;
+  outline: 3px solid #75c8bc;
+  outline-offset: 3px;
+}
+
 .gallery .show-card__summary {
   margin-top: 0.4rem;
   color: #647773;

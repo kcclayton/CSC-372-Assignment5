@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { fetchShowCast } from "../tvmaze.js";
 
 // ShowCard component: renders show details and asynchronously loaded cast.
-export default function ShowCard({ show }) {
+export default function ShowCard({ show, isDetailPage = false }) {
   const [cast, setCast] = useState(null);
   const [posterUnavailable, setPosterUnavailable] = useState(false);
 
@@ -47,20 +48,32 @@ export default function ShowCard({ show }) {
           Poster unavailable
         </div>
       )}
-      <h3 className="show-card__title">{displayValue(show.name)}</h3>
+      <h3 className="show-card__title">
+        {isDetailPage ? (
+          displayValue(show.name)
+        ) : (
+          <Link to={`/shows/${show.id}`}>{displayValue(show.name)}</Link>
+        )}
+      </h3>
       <p className="show-card__summary">{summary || "Not available"}</p>
-      <ShowDetail
-        label="Genres"
-        value={
-          show.genres?.length
-            ? show.genres.map(displayValue).join(", ")
-            : "Not available"
-        }
-      />
-      <ShowDetail label="Rating" value={formatRating(show.rating?.average)} />
+      {show.genres?.length > 0 && (
+        <ShowDetail
+          label="Genres"
+          value={show.genres.map(displayValue).join(", ")}
+        />
+      )}
+      {typeof show.rating?.average === "number" &&
+        Number.isFinite(show.rating.average) && (
+          <ShowDetail
+            label="Average rating"
+            value={formatRating(show.rating.average)}
+          />
+        )}
       <div className="show-card__dates">
-        <ShowDetail label="Premiere date" value={displayValue(show.premiered)} />
-        <ShowDetail label="End date" value={displayValue(show.ended)} />
+        {show.premiered && (
+          <ShowDetail label="Premiere date" value={show.premiered} />
+        )}
+        {show.ended && <ShowDetail label="End date" value={show.ended} />}
       </div>
       <ShowDetail label="Last updated" value={formatUpdatedDate(show.updated)} />
       <section className="show-card__cast">
@@ -126,7 +139,8 @@ function formatUpdatedDate(updated) {
     return "Not available";
   }
 
-  return new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(
-    updatedDate,
-  );
+  return new Intl.DateTimeFormat(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(updatedDate);
 }

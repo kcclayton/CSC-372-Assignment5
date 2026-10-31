@@ -33,6 +33,16 @@ export async function fetchShowCast(showId) {
   return response.json();
 }
 
+export async function fetchShow(showId) {
+  const response = await fetchTvmaze(
+    `https://api.tvmaze.com/shows/${showId}`,
+  );
+  if (!response.ok) {
+    throw new Error(`TVmaze show request failed with status ${response.status}.`);
+  }
+  return response.json();
+}
+
 function fetchTvmaze(url) {
   const request = tvmazeRequestQueue.then(async () => {
     await waitForTvmazeRequestSlot();

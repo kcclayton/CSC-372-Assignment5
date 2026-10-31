@@ -10,6 +10,7 @@ A responsive React single-page TV show search gallery built with Vite. It uses t
 - Handles missing poster images, failed requests, and API rate limiting.
 - Uses a responsive grid layout and supports keyboard-visible focus states.
 - Uses React Router so searches are addressable at `/search/:searchTerm`; `/` redirects to the default Friends search.
+- Links each show title to `/shows/:showId`, where the show details are loaded directly from TVmaze.
 
 ## Run locally
 
